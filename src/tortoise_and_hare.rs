@@ -7,7 +7,7 @@
 //THE RUNTIME COMPLEXITY MUST BE O(n) OR LOWER
 use rand::Rng;
 
-///Generates a random array (vector) with length `size` with values from 1 to `size - 1`
+///Generates a random array (vector) with length `s` and values from 1 to `s - 1`
 fn gen_challenge(n: usize) -> (Vec<usize>, usize) {
     let mut vec: Vec<usize> = Vec::new();
     //0 is init value of repeated value since we 100% know 0 cannot be in array
@@ -36,12 +36,12 @@ fn gen_challenge(n: usize) -> (Vec<usize>, usize) {
 }
 
 pub fn solution(arr: &[usize]) -> Option<usize> {
-    let mut tortoise = Some(&arr[0]);
-    let mut hare = Some(&arr[0]);
+    let mut tortoise = arr.get(0);
+    let mut hare = arr.get(0);
 
     while hare.is_some() {
-        tortoise = arr.get(*tortoise.expect("tortoise should be some as it was just checked"));
-        hare = arr.get(
+        tortoise = arr.get(*tortoise.expect("tortoise should be some as it was just checked")); //arr[tortoise]
+        hare = arr.get( //arr[arr[hare]]
             *arr.get(
                 *hare.expect("hare should be some as it was just checked")
             ).unwrap_or_else(|| hare.unwrap()) //use unwrap_or_else here for lazy evaluation of fn call
@@ -101,5 +101,22 @@ mod tests {
     fn test6() {
         let vec = vec![1, 2, 3, 4, 5, 6, 7, 8, 3];
         assert_eq!(Some(3), solution(&vec));
+    }
+
+    #[test]
+    fn test7() {
+        let vec = vec![4];
+        assert_eq!(None, solution(&vec));
+    }
+
+    #[test]
+    fn test8() {
+        let vec = vec![1, 1];
+        assert_eq!(Some(1), solution(&vec));
+    }
+
+    #[test]
+    fn test9() {
+        assert_eq!(None, solution(&[]));
     }
 }

@@ -4,7 +4,7 @@
 
 //YOU MUST ONLY USE CONSTANT EXTRA SPACE O(1)
 //THE ARRAY CANNOT BE MODIFIED
-//THE RUNTIME COMPLEXITY MUST BE O(n)
+//THE RUNTIME COMPLEXITY MUST BE O(n) OR LOWER
 use rand::Rng;
 
 ///Generates a random array (vector) with length `size` with values from 1 to `size - 1`
@@ -35,31 +35,28 @@ fn gen_challenge(n: usize) -> (Vec<usize>, usize) {
     (vec, repeated_value)
 }
 
-pub fn solution(arr: &[usize]) -> Option<&usize> {    
-    if arr.len() < 3 { 
-        return None;
-    }
-    
+pub fn solution(arr: &[usize]) -> Option<usize> {
     let mut tortoise = Some(&arr[0]);
     let mut hare = Some(&arr[0]);
 
-    while tortoise.is_some() && hare.is_some() {
-        tortoise = arr.get(*tortoise.expect("tortoise should be some"));
+    while hare.is_some() {
+        tortoise = arr.get(*tortoise.expect("tortoise should be some as it was just checked"));
         hare = arr.get(
             *arr.get(
-                *hare.expect("hare should be some")
-            ).unwrap_or_else(|| hare.unwrap())
+                *hare.expect("hare should be some as it was just checked")
+            ).unwrap_or_else(|| hare.unwrap()) //use unwrap_or_else here for lazy evaluation of fn call
         );
 
-        if tortoise == hare {
-            tortoise = arr.get(0);
+        if hare.is_some() && tortoise == hare {
+            let mut from_head = arr[0];
+            let mut from_meeting = *hare.unwrap();            
 
-            while tortoise != hare {
-                tortoise = arr.get(*tortoise.unwrap());
-                hare = arr.get(*hare.unwrap());
+            while from_head != from_meeting {
+                from_head = arr[from_head];
+                from_meeting = arr[from_meeting];                
             }
 
-            return tortoise;
+            return Some(from_head);
         }
     }
     
@@ -73,7 +70,7 @@ mod tests {
     #[test]
     fn test1() {
         let v1 = vec![1, 2, 3, 4, 1];        
-        assert_eq!(Some(&1), solution(&v1));
+        assert_eq!(Some(1), solution(&v1));
     }
 
     #[test]
@@ -84,26 +81,25 @@ mod tests {
 
     #[test]
     fn test3() {
-        let (v3, repeated_value1) = gen_challenge(10);       
-        println!("{v3:?}, {repeated_value1}"); 
-        assert_eq!(Some(&repeated_value1), solution(&v3));        
+        let (v3, repeated_value1) = gen_challenge(10);        
+        assert_eq!(Some(repeated_value1), solution(&v3));        
     }   
 
     #[test]    
     fn test4() {
         let (v4, repeated_value2) = gen_challenge(100);
-        assert_eq!(Some(&repeated_value2), solution(&v4));
+        assert_eq!(Some(repeated_value2), solution(&v4));
     }
 
     #[test]    
     fn test5() {
         let (v5, repeated_value3) = gen_challenge(1000);
-        assert_eq!(Some(&repeated_value3), solution(&v5));
+        assert_eq!(Some(repeated_value3), solution(&v5));
     } 
 
     #[test]    
-    fn test_6() {
+    fn test6() {
         let vec = vec![1, 2, 3, 4, 5, 6, 7, 8, 3];
-        assert_eq!(Some(&3), solution(&vec));
+        assert_eq!(Some(3), solution(&vec));
     }
 }

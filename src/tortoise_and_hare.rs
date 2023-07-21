@@ -47,6 +47,8 @@ pub fn solution(arr: &[usize]) -> Option<usize> {
             ).unwrap_or_else(|| hare.unwrap()) //use unwrap_or_else here for lazy evaluation of fn call
         );
 
+        //Check if hare is some after the move
+        //so we don't get a None == None situation when Array has len of 1
         if hare.is_some() && tortoise == hare {
             let mut from_head = arr[0];
             let mut from_meeting = *hare.unwrap();            
@@ -68,55 +70,55 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test1() {
+    fn tortoise_and_hare_test1() {
         let v1 = vec![1, 2, 3, 4, 1];        
         assert_eq!(Some(1), solution(&v1));
     }
 
     #[test]
-    fn test2() {
+    fn tortoise_and_hare_test2() {
         let v2 = vec![1, 2];
         assert_eq!(None, solution(&v2))
     }
 
     #[test]
-    fn test3() {
+    fn tortoise_and_hare_test3() {
         let (v3, repeated_value1) = gen_challenge(10);        
         assert_eq!(Some(repeated_value1), solution(&v3));        
     }   
 
     #[test]    
-    fn test4() {
+    fn tortoise_and_hare_test4() {
         let (v4, repeated_value2) = gen_challenge(100);
         assert_eq!(Some(repeated_value2), solution(&v4));
     }
 
     #[test]    
-    fn test5() {
+    fn tortoise_and_hare_test5() {
         let (v5, repeated_value3) = gen_challenge(1000);
         assert_eq!(Some(repeated_value3), solution(&v5));
     } 
 
     #[test]    
-    fn test6() {
+    fn tortoise_and_hare_test6() {
         let vec = vec![1, 2, 3, 4, 5, 6, 7, 8, 3];
         assert_eq!(Some(3), solution(&vec));
     }
 
     #[test]
-    fn test7() {
+    fn tortoise_and_hare_test7() {
         let vec = vec![4];
         assert_eq!(None, solution(&vec));
     }
 
     #[test]
-    fn test8() {
+    fn tortoise_and_hare_test8() {
         let vec = vec![1, 1];
         assert_eq!(Some(1), solution(&vec));
     }
 
     #[test]
-    fn test9() {
+    fn tortoise_and_hare_test9() {
         assert_eq!(None, solution(&[]));
     }
 }

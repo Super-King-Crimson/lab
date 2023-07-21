@@ -28,6 +28,10 @@ fn perform_valid_move(hanoi: &mut [Vec<u8>; 3], from_index: usize, to_index: usi
 }
 
 pub fn solve_recur(hanoi: &mut [Vec<u8>; 3], start_index: usize, goal_index: usize, spare_index: usize, n: u32) {
+    if n == 0 {
+        panic!("Attempted to solve a hanoi with empty start tower: `n` must be equal to the number of disks on top of hanoi[start_index]");
+    }
+
     if n == 1 {
         move_one(hanoi, start_index, goal_index);        
     } else {
@@ -43,15 +47,15 @@ pub fn solve_recur(hanoi: &mut [Vec<u8>; 3], start_index: usize, goal_index: usi
 pub fn solve_iter(hanoi: &mut [Vec<u8>; 3], start_index: usize, goal_index: usize, spare_index: usize) {
     let n = hanoi[start_index].len();
 
-    if n == 0 || n == 1 {
-        if n == 1 {
-            move_one(hanoi, start_index, goal_index);
-        }
-        
-        return;
+    if n == 0 {
+        panic!("Attempted to solve a hanoi with empty start tower");
     }
 
-    let iterations = 2u32.pow(u32::try_from(n).expect("Value was too large")) - 1;
+    if n == 1 {
+        move_one(hanoi, start_index, goal_index);
+    }      
+
+    let iterations = 2u32.checked_pow(u32::try_from(n).expect("Value is too large")).expect("Value is too large") - 1;
     
     //if n is even, swap goal and spare (they'll still end up on the right pole don't worry)
     let (goal_index, spare_index) = {
@@ -110,6 +114,49 @@ mod tests {
     }
 
     #[test]
+    #[should_panic(expected = "empty start tower")]
+    fn hanoi_recur_test2() {
+        let mut hanoi: [Vec<u8>; 3] = [
+            vec![],
+            vec![],
+            vec![],
+        ];
+
+        solve_recur(&mut hanoi, 0, 1, 2, 0);
+    }
+
+    #[test]
+    #[should_panic(expected = "nvalid move")]
+    fn hanoi_recur_test3() {
+        let mut hanoi: [Vec<u8>; 3] = [
+            vec![1, 2, 3],
+            vec![],
+            vec![],
+        ];
+
+        solve_recur(&mut hanoi, 0, 1, 2, 3);
+    }
+
+    #[test]    
+    fn hanoi_recur_test4() {
+        let mut hanoi: [Vec<u8>; 3] = [
+            vec![1],
+            vec![],
+            vec![],
+        ];
+
+        solve_recur(&mut hanoi, 0, 1, 2, 1);
+
+        assert_eq!(
+            hanoi, [
+                vec![],
+                vec![1],
+                vec![],
+            ]
+        );
+    }
+
+    #[test]
     fn hanoi_iter_test1() {
         let mut hanoi = [
             vec![6, 5, 4, 3, 2, 1u8],
@@ -125,9 +172,51 @@ mod tests {
             vec![],
         ]);
 
-        solve_iter(&mut hanoi, 1, 2, 0);
+        solve_iter(&mut hanoi, 1, 2, 0);        
 
-        println!("{hanoi:?}");
+        assert_eq!(hanoi, [
+            vec![],
+            vec![],
+            vec![6, 5, 4, 3, 2, 1u8],
+        ]);
+    }
+
+    #[test]
+    #[should_panic(expected = "empty start tower")]
+    fn hanoi_iter_test2() {
+        let mut hanoi: [Vec<u8>; 3] = [
+            vec![],
+            vec![],
+            vec![],
+        ];
+
+        solve_iter(&mut hanoi, 0, 1, 2);
+    }
+
+    #[test]
+    #[should_panic(expected = "too")] //too large, too big
+    fn hanoi_iter_test3() {
+        let mut big_vec = vec![];
+
+        for i in 0..255 {
+            big_vec.push(255-i);
+        }
+
+        let mut hanoi = [
+            big_vec,
+            vec![],
+            vec![],
+        ];
+
+        solve_iter(&mut hanoi, 0, 1, 2);
+
+        assert_eq!(hanoi, [
+            vec![],
+            vec![6, 5, 4, 3, 2, 1u8],
+            vec![],
+        ]);
+
+        solve_iter(&mut hanoi, 1, 2, 0);        
 
         assert_eq!(hanoi, [
             vec![],

@@ -31,8 +31,8 @@ pub mod hashmaps {
 }
 
 pub mod iterators {
-    pub fn every_other_item_in_first_ten_times_five(slice: &[i32]) -> Vec<i32> {        
-        slice.iter().take(10).step_by(2).map(|v,| *v).collect()
+    pub fn every_other_item_in_first_ten_times_five(slice: &[i32]) -> Vec<i32> {
+        slice.iter().take(10).step_by(2).map(|v,| *v * 5).collect()
     }
 
     pub fn flatten_find_indices(pat: &str, slice: &[&str]) -> Vec<(usize, usize)> {
@@ -80,12 +80,12 @@ mod tests {
     #[test]
     fn every_other_item_in_first_ten_times_five_test1() {
         let vec = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-        assert_eq!(every_other_item_in_first_ten_times_five(&vec), vec![1, 3, 5, 7, 9i32]);
+        assert_eq!(every_other_item_in_first_ten_times_five(&vec), vec![5, 15, 25, 35, 45i32]);
     }
 
     #[test]
     fn every_other_item_in_first_ten_times_five_test2() {
-        let vec = vec![0, 2, 4, 6, 8, 10];
-        assert_eq!(every_other_item_in_first_ten_times_five(&vec[1..]), vec![2, 6, 10]);
+        let vec = vec![0, 2, 40, 600, 8000, 100000];
+        assert_eq!(every_other_item_in_first_ten_times_five(&vec[1..]), vec![10, 3000, 500000]);
     }
 }

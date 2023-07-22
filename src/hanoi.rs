@@ -196,14 +196,8 @@ mod tests {
     #[test]
     #[should_panic(expected = "too")] //too large, too big
     fn hanoi_iter_test3() {
-        let mut big_vec = vec![];
-
-        for i in 0..255 {
-            big_vec.push(255-i);
-        }
-
         let mut hanoi = [
-            big_vec,
+            vec![0u8; 256].iter_mut().zip(0u8..255).map(|(_, i)| 255 - i).collect::<Vec<u8>>(),            
             vec![],
             vec![],
         ];

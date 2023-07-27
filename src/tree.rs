@@ -19,7 +19,7 @@ pub struct Node<'a, T> {
 //Let's do some lifetime annotations:
     //Step 1: &mut borrow of prev.children
     //Step 2: &mut borrow of self, &mut borrow of new.children
-    //Step 3: &mut borrow of self, &mut borrow of new.children (!!!!!!)
+    //Step 3: &mut borrow of new.children (!!!!!!)
 //Is that a double mutable borrow I see?
 
 //This is unavoidable. Since the Some value of a parent must be a mutable reference to a Node
@@ -37,7 +37,7 @@ impl<'a, T> Node<'a, T> {
 
         //mutable borrow 1
         other.children.push(self);
-        //HERE IT IS!
+        //HERE IT IS! we refer to other to push self onto it, then we have to put that reference we pushed onto self, which is two mut refs 
         // self.parent = Some(other);
 
         //In this case we need a structure that allows multiple mutability: Rc<RefCell<T>>, otherwise this is flat-out impossible

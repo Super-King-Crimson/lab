@@ -5,3 +5,5 @@ pub mod donut;
 pub mod hanoi;
 
 pub mod showcase;
+
+pub mod tree;

@@ -1,3 +1,5 @@
-fn main() {    
-    println!("Hello, World?");
+use lab_rs::*;
+
+fn main() {
+    closures::what();
 }

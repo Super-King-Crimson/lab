@@ -7,3 +7,5 @@ pub mod hanoi;
 pub mod showcase;
 
 pub mod tree;
+
+pub mod closures;
